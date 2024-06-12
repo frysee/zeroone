@@ -1,12 +1,10 @@
 on:
   push:
     branches:
-      - 'main'
-      - 'release'
-      - 'dev'
+      - '*'
   workflow_dispatch:
 jobs:
-  release:
+  build:
     strategy:
       fail-fast: false
       matrix:
@@ -26,16 +24,9 @@ jobs:
             pnpm_command: 'build:mac'
             binary_path: dist/*.dmg
             asset_name: zeroone.dmg
-    name: ${{ matrix.name }} Release
+    name: ${{ matrix.name }} Build
     runs-on: ${{ matrix.os }}
     steps:
-    - name: 🔢 Semantic Versioning
-      id: version
-      uses: paulhatch/semantic-version@v5.4.0
-      with:
-        tag_prefix: "v"
-        bump_each_commit: true
-
     - name: 🚚 Checkout latest code
       uses: actions/checkout@v4
 
@@ -48,7 +39,7 @@ jobs:
       uses: pnpm/action-setup@v4.0.0
 
     #TODO - Remove this once https://github.com/electron-userland/electron-builder/issues/6933#issuecomment-1213438889 is resolved
-    - name: Tweak pnpm.cjs
+    - name: 💡 Tweak pnpm.cjs
       if: ${{ contains(matrix.os, 'windows') }}
       run: sed -i 's/\/usr\/bin\/env node/node/g' /c/Users/runneradmin/setup-pnpm/node_modules/.pnpm/pnpm@9.3.0/node_modules/pnpm/bin/pnpm.cjs
       shell: bash
@@ -59,15 +50,5 @@ jobs:
       run: |
         pnpm i
         pnpm ${{ matrix.pnpm_command }}
-
-    - name: 📦 Release binary
-      uses: svenstaro/upload-release-action@v2
-      with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: ${{ matrix.binary_path }}
-        asset_name: ${{ matrix.asset_name }}
-        tag: ${{ steps.version.outputs.version_tag }}
-        file_glob: true
-        overwrite: true
 permissions:
   contents: write
