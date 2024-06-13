@@ -12,7 +12,9 @@ jobs:
           - name: 🐧 Linux
             os: ubuntu-latest
             pnpm_command: 'build:linux'
-            binary_path: dist/*.{snap,AppImage}
+            binary_path: |
+              dist/*.AppImage
+              dist/*.snap
             asset_name: zeroone.AppImage
           - name: 🪟 Windows
             os: windows-latest
