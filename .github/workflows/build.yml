@@ -12,7 +12,7 @@ jobs:
           - name: 🐧 Linux
             os: ubuntu-latest
             pnpm_command: 'build:linux'
-            binary_path: dist/*.AppImage
+            binary_path: dist/*.{snap,AppImage}
             asset_name: zeroone.AppImage
           - name: 🪟 Windows
             os: windows-latest
@@ -56,5 +56,6 @@ jobs:
       with:
         name: ${{ matrix.asset_name }}
         path: ${{ matrix.binary_path }}
+        overwrite: true
 permissions:
   contents: write
