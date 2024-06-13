@@ -4,8 +4,10 @@ import { EventEmitter } from 'events'
 
 // JTAG interface, TODO: change me!
 const NANO_VID_PID_PAIRS = [
-  { vid: '239A', pid: '8010' },
-  { vid: '303A', pid: '1001' }
+  // 0x239A Adafruit Industries LLC
+  { vid: '239a', pid: '8010' },
+  // 0x303A 0x1001 Espressif Incorporated USB JTAG/serial debug unit
+  { vid: '303a', pid: '1001' }
 ]
 const NANO_BAUD_RATE = 115200
 
@@ -19,6 +21,7 @@ class NanoSerialApi extends EventEmitter {
         .then((ports: PortInfo[]) => {
           const found_nano_devices: string[] = []
           for (const port of ports) {
+            console.log('checking', port)
             if (
               port.serialNumber &&
               NANO_VID_PID_PAIRS.some(
